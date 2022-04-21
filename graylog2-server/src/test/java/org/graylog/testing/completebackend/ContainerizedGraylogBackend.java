@@ -17,10 +17,7 @@
 package org.graylog.testing.completebackend;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.restassured.RestAssured;
-import io.restassured.config.FailureConfig;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.listener.ResponseValidationFailureListener;
+import org.apache.commons.lang3.StringUtils;
 import org.graylog.testing.containermatrix.MongodbServer;
 import org.graylog.testing.elasticsearch.SearchServerInstance;
 import org.graylog.testing.graylognode.ExecutableNotFoundException;
@@ -31,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +56,16 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         return backend;
     }
 
+    private void createLicense(MongoDBInstance mongoDBInstance, String license) {
+        try {
+            Class myClass = Class.forName("testing.completebackend.EnterpriseITUtils");
+            Method method = myClass.getDeclaredMethod("importLicense", MongoDBInstance.class, String.class);
+            method.invoke(null, mongoDBInstance, license);
+        } catch (NoSuchMethodException | ClassNotFoundException | InvocationTargetException | IllegalAccessException ex) {
+            LOG.error("Could not import license to Mongo: ", ex);
+        }
+    }
+
     private void create(SearchVersion esVersion, MongodbServer mongodbVersion,
                         int[] extraPorts, List<URL> mongoDBFixtures,
                         PluginJarsProvider pluginJarsProvider, MavenProjectDirProvider mavenProjectDirProvider) {
@@ -68,6 +77,11 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         MongoDBInstance mongoDB = MongoDBInstance.createStartedWithUniqueName(network, Lifecycle.CLASS, mongodbVersion);
         mongoDB.dropDatabase();
         mongoDB.importFixtures(mongoDBFixtures);
+
+        final String license = System.getenv("GRAYLOG_LICENSE_STRING");
+        if(StringUtils.isNotBlank(license)) {
+            createLicense(mongoDB, license);
+        }
 
         try {
             // Wait for ES before starting the Graylog node to avoid any race conditions
