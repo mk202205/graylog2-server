@@ -141,17 +141,18 @@ public class ContainerMatrixClassSelectorResolver implements SelectorResolver {
         if (containerMatrixTestsDescriptor.isPresent()) {
             final SearchVersion esVersion = containerMatrixTestsDescriptor.get().getEsVersion();
             final MongodbServer mongoVersion = containerMatrixTestsDescriptor.get().getMongoVersion();
+            final boolean preImportLicense = containerMatrixTestsDescriptor.get().getLifecycle().equals(Lifecycle.CLASS) ?
+                containerMatrixTestsDescriptor.get().isPreImportLicense() : true;
 
             return new ContainerMatrixTestClassDescriptor(
                     parent,
                     testClass,
-                    configuration, esVersion, mongoVersion, ContainerMatrixTestEngine.getMongoDBFixtures(Lifecycle.CLASS, testClass));
+                    configuration, esVersion, mongoVersion, ContainerMatrixTestEngine.getMongoDBFixtures(Lifecycle.CLASS, testClass), preImportLicense);
         } else {
             return new ContainerMatrixTestClassDescriptor(
                     parent,
                     testClass,
-                    configuration, ContainerMatrixTestEngine.getMongoDBFixtures(Lifecycle.CLASS, testClass));
-
+                    configuration, ContainerMatrixTestEngine.getMongoDBFixtures(Lifecycle.CLASS, testClass), true);
         }
     }
 

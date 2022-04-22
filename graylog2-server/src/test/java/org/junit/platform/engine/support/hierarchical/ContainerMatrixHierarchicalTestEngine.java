@@ -87,6 +87,7 @@ public abstract class ContainerMatrixHierarchicalTestEngine<C extends EngineExec
                         List<URL> fixtures = mongoDBFixtures;
                         if (td instanceof ContainerMatrixTestClassDescriptor) {
                             fixtures = ((ContainerMatrixTestClassDescriptor) td).getMongoFixtures();
+                            preImportLicense = ((ContainerMatrixTestClassDescriptor) td).isPreImportLicense();
                         }
                         try (ContainerizedGraylogBackend backend = ContainerizedGraylogBackend.createStarted(esVersion, mongoVersion, extraPorts, fixtures, pluginJarsProvider, mavenProjectDirProvider, preImportLicense)) {
                             RequestSpecification specification = requestSpec(backend);
