@@ -45,6 +45,7 @@ public class ContainerMatrixTestsDescriptor extends AbstractTestDescriptor {
     private final MongodbServer mongoVersion;
     private final Set<Integer> extraPorts = Collections.synchronizedSet(new HashSet<>());
     private final Set<URL> mongoDBFixtures = Collections.synchronizedSet(new HashSet<>());
+    private final boolean preImportLicense;
 
     public ContainerMatrixTestsDescriptor(TestDescriptor parent,
                                           Lifecycle lifecycle,
@@ -55,7 +56,8 @@ public class ContainerMatrixTestsDescriptor extends AbstractTestDescriptor {
                                           SearchVersion esVersion,
                                           MongodbServer mongoVersion,
                                           Set<Integer> extraPorts,
-                                          List<URL> mongoDBFixtures) {
+                                          List<URL> mongoDBFixtures,
+                                          boolean preImportLicense) {
         super(parent.getUniqueId().append(SEGMENT_TYPE,
                         createKey(lifecycle, mavenProjectDirProviderId, pluginJarsProviderId, esVersion, mongoVersion)),
                 createKey(lifecycle, mavenProjectDirProviderId, pluginJarsProviderId, esVersion, mongoVersion));
@@ -67,12 +69,14 @@ public class ContainerMatrixTestsDescriptor extends AbstractTestDescriptor {
         this.mongoVersion = mongoVersion;
         this.extraPorts.addAll(extraPorts);
         this.mongoDBFixtures.addAll(mongoDBFixtures);
+        this.preImportLicense = preImportLicense;
     }
 
     public ContainerMatrixTestsDescriptor(TestDescriptor parent,
                                           String displayName,
                                           Set<Integer> extraPorts,
-                                          List<URL> mongoDBFixtures) {
+                                          List<URL> mongoDBFixtures,
+                                          boolean preImportLicense) {
         super(parent.getUniqueId().append(SEGMENT_TYPE,
                         displayName),
                 displayName);
@@ -84,6 +88,7 @@ public class ContainerMatrixTestsDescriptor extends AbstractTestDescriptor {
         this.mongoVersion = MongodbServer.DEFAULT_VERSION;
         this.extraPorts.addAll(extraPorts);
         this.mongoDBFixtures.addAll(mongoDBFixtures);
+        this.preImportLicense = preImportLicense;
     }
 
     protected static String createKey(Lifecycle lifecycle, String mavenProjectDirProvider, String pluginJarsProvider, SearchVersion esVersion, MongodbServer mongoVersion) {
@@ -125,5 +130,9 @@ public class ContainerMatrixTestsDescriptor extends AbstractTestDescriptor {
 
     public List<URL> getMongoDBFixtures() {
         return new ArrayList<>(mongoDBFixtures);
+    }
+
+    public boolean isPreImportLicense() {
+        return preImportLicense;
     }
 }

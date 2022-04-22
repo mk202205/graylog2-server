@@ -26,7 +26,8 @@ public class ContainerMatrixTestWithRunningESMongoTestsDescriptor extends Contai
     public ContainerMatrixTestWithRunningESMongoTestsDescriptor(TestDescriptor parent,
                                                                 Set<Integer> extraPorts,
                                                                 List<URL> mongoDBFixtures) {
-        super(parent, "Testing with running ES and MongoDB instances.", extraPorts, mongoDBFixtures);
+        // don't import a license string into a running MongoDB
+        super(parent, "Testing with running ES and MongoDB instances.", extraPorts, mongoDBFixtures, false);
     }
 }
 

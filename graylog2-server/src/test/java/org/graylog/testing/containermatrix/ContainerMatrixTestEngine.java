@@ -98,6 +98,15 @@ public class ContainerMatrixTestEngine extends ContainerMatrixHierarchicalTestEn
         return get(annotatedClasses, (ContainerMatrixTestsConfiguration annotation) -> Arrays.stream(annotation.extraPorts()).boxed());
     }
 
+    private boolean preImportLicense(Set<Class<?>> annotatedClasses) {
+        return annotatedClasses
+                .stream()
+                .map(aClass -> AnnotationSupport.findAnnotation(aClass, ContainerMatrixTestsConfiguration.class))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .anyMatch(ContainerMatrixTestsConfiguration::preImportLicense);
+    }
+
     public static List<URL> getMongoDBFixtures(Lifecycle lifecycle, Class<?> annotatedClass) {
         final List<URL> urls = new ArrayList<>();
         AnnotationSupport.findAnnotation(annotatedClass, ContainerMatrixTestsConfiguration.class).ifPresent(anno -> {
@@ -181,7 +190,8 @@ public class ContainerMatrixTestEngine extends ContainerMatrixHierarchicalTestEn
                                                                     searchVersion,
                                                                     mongoVersion,
                                                                     extraPorts,
-                                                                    mongoDBFixtures);
+                                                                    mongoDBFixtures,
+                                                                    preImportLicense(annotated));
                                                             new ContainerMatrixTestsDiscoverySelectorResolver(engineDescriptor).resolveSelectors(discoveryRequest, testsDescriptor);
                                                             engineDescriptor.addChild(testsDescriptor);
                                                         })
@@ -200,7 +210,8 @@ public class ContainerMatrixTestEngine extends ContainerMatrixHierarchicalTestEn
                                                                     esVersion,
                                                                     mongoVersion,
                                                                     extraPorts,
-                                                                    new ArrayList<>());
+                                                                    new ArrayList<>(),
+                                                                    preImportLicense(annotated));
                                                             new ContainerMatrixTestsDiscoverySelectorResolver(engineDescriptor).resolveSelectors(discoveryRequest, testsDescriptor);
                                                             engineDescriptor.addChild(testsDescriptor);
                                                         })

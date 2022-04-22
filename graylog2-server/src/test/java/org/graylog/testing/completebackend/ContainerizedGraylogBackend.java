@@ -49,10 +49,10 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
 
     public static ContainerizedGraylogBackend createStarted(SearchVersion esVersion, MongodbServer mongodbVersion,
                                                             int[] extraPorts, List<URL> mongoDBFixtures,
-                                                            PluginJarsProvider pluginJarsProvider, MavenProjectDirProvider mavenProjectDirProvider) {
+                                                            PluginJarsProvider pluginJarsProvider, MavenProjectDirProvider mavenProjectDirProvider, boolean preImportLicense) {
 
         final ContainerizedGraylogBackend backend = new ContainerizedGraylogBackend();
-        backend.create(esVersion, mongodbVersion, extraPorts, mongoDBFixtures, pluginJarsProvider, mavenProjectDirProvider);
+        backend.create(esVersion, mongodbVersion, extraPorts, mongoDBFixtures, pluginJarsProvider, mavenProjectDirProvider, preImportLicense);
         return backend;
     }
 
@@ -68,7 +68,7 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
 
     private void create(SearchVersion esVersion, MongodbServer mongodbVersion,
                         int[] extraPorts, List<URL> mongoDBFixtures,
-                        PluginJarsProvider pluginJarsProvider, MavenProjectDirProvider mavenProjectDirProvider) {
+                        PluginJarsProvider pluginJarsProvider, MavenProjectDirProvider mavenProjectDirProvider, boolean preImportLicense) {
 
         final SearchServerInstanceFactory searchServerInstanceFactory = new SearchServerInstanceFactoryByVersion(esVersion);
         Network network = Network.newNetwork();
@@ -79,7 +79,7 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         mongoDB.importFixtures(mongoDBFixtures);
 
         final String license = System.getenv("GRAYLOG_LICENSE_STRING");
-        if(StringUtils.isNotBlank(license)) {
+        if(preImportLicense && StringUtils.isNotBlank(license)) {
             createLicense(mongoDB, license);
         }
 

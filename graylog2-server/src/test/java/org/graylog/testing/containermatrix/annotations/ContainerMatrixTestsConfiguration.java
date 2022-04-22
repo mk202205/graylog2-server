@@ -73,4 +73,7 @@ public @interface ContainerMatrixTestsConfiguration {
 
     // are run after the initialization of mongoDb, gets concatenated for all tests below the above rules
     String[] mongoDBFixtures() default {};
+
+    // pre-import an existing GL license to avoid possible race conditions during tests, only works reliable with Lifecycle.CLASS
+    boolean preImportLicense() default true;
 }
