@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import org.graylog.plugins.views.search.SearchDomain;
 import org.graylog.plugins.views.search.SearchExecutionGuard;
-import org.graylog.plugins.views.search.elasticsearch.QueryStringDecorators;
 import org.graylog.plugins.views.search.errors.PermissionException;
 import org.graylog.plugins.views.search.export.AuditContext;
 import org.graylog.plugins.views.search.export.CommandFactory;
@@ -33,7 +32,6 @@ import org.graylog.plugins.views.search.permissions.SearchUser;
 import org.graylog.plugins.views.search.validation.LuceneQueryParser;
 import org.graylog.plugins.views.search.validation.QueryValidationService;
 import org.graylog.plugins.views.search.validation.QueryValidationServiceImpl;
-import org.graylog.plugins.views.search.validation.fields.UnknownFieldsIdentifier;
 import org.graylog2.indexer.fieldtypes.MappedFieldTypesService;
 import org.graylog2.plugin.database.users.User;
 import org.graylog2.shared.bindings.GuiceInjectorHolder;
@@ -43,8 +41,8 @@ import org.mockito.ArgumentCaptor;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -59,7 +57,6 @@ public class MessagesResourceTest {
 
     private MessagesResource sut;
     private User currentUser;
-    private PermittedStreams permittedStreams;
     private SearchExecutionGuard executionGuard;
     private CommandFactory commandFactory;
     @SuppressWarnings("UnstableApiUsage")
@@ -67,7 +64,6 @@ public class MessagesResourceTest {
 
     @BeforeEach
     void setUp() {
-        GuiceInjectorHolder.createInjector(Collections.emptyList());
         currentUser = mock(User.class);
         when(currentUser.getName()).thenReturn("peterchen");
         MessagesExporter exporter = mock(MessagesExporter.class);
@@ -75,8 +71,7 @@ public class MessagesResourceTest {
         when(commandFactory.buildFromRequest(any())).thenReturn(ExportMessagesCommand.withDefaults());
         when(commandFactory.buildWithSearchOnly(any(), any())).thenReturn(ExportMessagesCommand.withDefaults());
         when(commandFactory.buildWithMessageList(any(), any(), any())).thenReturn(ExportMessagesCommand.withDefaults());
-        permittedStreams = mock(PermittedStreams.class);
-        when(permittedStreams.load(any())).thenReturn(ImmutableSet.of("a-default-stream"));
+        final PermittedStreams permittedStreams = new PermittedStreams(() -> Stream.of("a-default-stream"));
         executionGuard = mock(SearchExecutionGuard.class);
         SearchDomain searchDomain = mock(SearchDomain.class);
 
@@ -84,8 +79,7 @@ public class MessagesResourceTest {
         final QueryValidationServiceImpl validationService = new QueryValidationServiceImpl(
                 new LuceneQueryParser(),
                 mappedFieldTypesService,
-                new QueryStringDecorators(Collections.emptySet()), (t, detectedFieldType) -> Optional.empty(),
-                new UnknownFieldsIdentifier(mappedFieldTypesService));
+                Collections.emptySet());
 
         sut = new MessagesTestResource(exporter, commandFactory, searchDomain, executionGuard, permittedStreams, mock(ObjectMapper.class), eventBus, validationService);
 
