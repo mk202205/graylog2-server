@@ -22,7 +22,17 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
         cache: maven
+    - name: Set up Yarn cache
+      uses: actions/cache@v2
+      with:
+        key: ${{ runner.os }}-yarn-${{ hashFiles('graylog2-web-interface/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+        path: ~/.cache/yarn
+    - name: License check
+      run: mvn -B --fail-fast license:check
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
-    - name: Package von Maven
-      run: mvn -B -Dmaven.test.skip=true -Dskip.web.build=true assembly:single --file pom.xml
+      run: mvn -B --fail-fast -Pedantic -Dspotbugs.skip -Dit.es -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 verify javadoc:javadoc
+      env:
+        JAVA_OPTS: -Xmx6G
+        TIMEOUT_MULTIPLIER: 2.0
