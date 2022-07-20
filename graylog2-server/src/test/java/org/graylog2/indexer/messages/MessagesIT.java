@@ -110,7 +110,7 @@ public class MessagesIT extends ElasticsearchBaseTest {
         assertThat(message.hasField(JestResult.ES_METADATA_VERSION)).isFalse();
     }
 
-    @Disabled("Disabled until build configuration is fixed")
+    @Ignore("Disabled until build configuration is fixed")
     @Test
     public void testIfTooLargeBatchesGetSplitUp() throws Exception {
         // This test assumes that ES is configured with bulk_max_body_size to 100MB
