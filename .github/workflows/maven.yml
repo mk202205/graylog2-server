@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: my-artifacts
-        path: graylog2-server/target/assembly/*.tar.gz
+        path: /home/runner/work/graylog2-server/graylog2-server/target/assembly/*.tar.gz
