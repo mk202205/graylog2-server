@@ -42,6 +42,7 @@
 
     <dependencies>
 
+        <!-- Package will not be uploaded
         <dependency>
             <groupId>org.graylog2</groupId>
             <artifactId>graylog2-server</artifactId>
@@ -55,6 +56,7 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        -->
 
         <!-- Logging dependencies -->
         <dependency>
