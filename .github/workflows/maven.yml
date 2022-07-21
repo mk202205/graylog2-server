@@ -36,3 +36,8 @@ jobs:
       env:
         JAVA_OPTS: -Xmx6G
         TIMEOUT_MULTIPLIER: 2.0
+    - name: Store build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: my-artifacts
+        path: graylog2-server/graylog2-server/target/assembly/*.tar.gz
