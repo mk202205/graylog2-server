@@ -1,6 +1,6 @@
 {
   "name": "graylog-web-interface",
-  "version": "3.3.17-security.1",
+  "version": "3.3.17-security-dev",
   "description": "Graylog Web Interface",
   "author": "torch",
   "license": "GPL-3.0",
