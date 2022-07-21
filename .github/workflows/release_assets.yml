@@ -44,7 +44,7 @@ jobs:
     - name: Prepare assets
       run: |
         cd /home/runner/work/graylog2-server/graylog2-server/target/assembly/
-        mv graylog2*.tar.gz "graylog2-${{ github.ref_name }}.tar.gz"
+        mv graylog*.tar.gz "graylog2-${{ github.ref_name }}.tar.gz"
         sha256sum "graylog2-${{ github.ref_name }}.tar.gz" > "graylog2-${{ github.ref_name }}.tar.gz.sha256"
 
     - name: Upload asset
