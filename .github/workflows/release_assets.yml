@@ -43,7 +43,8 @@ jobs:
 
     - name: Prepare assets
       run: |
-        cp /home/runner/work/graylog2-server/graylog2-server/target/assembly/*.tar.gz "graylog2-${{ github.ref_name }}.tar.gz"
+        cd /home/runner/work/graylog2-server/graylog2-server/target/assembly/
+        mv graylog2*.tar.gz "graylog2-${{ github.ref_name }}.tar.gz"
         sha256sum "graylog2-${{ github.ref_name }}.tar.gz" > "graylog2-${{ github.ref_name }}.tar.gz.sha256"
 
     - name: Upload asset
@@ -52,7 +53,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: "./graylog2-${{ github.ref_name }}.tar.gz"
+        asset_path: "/home/runner/work/graylog2-server/graylog2-server/target/assembly/graylog2-${{ github.ref_name }}.tar.gz"
         asset_name: "graylog2-${{ github.ref_name }}.tar.gz"
         asset_content_type: application/gzip
     - name: Upload asset SHA256 checksum
@@ -61,6 +62,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: "./graylog2-${{ github.ref_name }}.tar.gz.sha256"
+        asset_path: "/home/runner/work/graylog2-server/graylog2-server/target/assembly/graylog2-${{ github.ref_name }}.tar.gz.sha256"
         asset_name: "graylog2-${{ github.ref_name }}.tar.gz.sha256"
         asset_content_type: plain/text
