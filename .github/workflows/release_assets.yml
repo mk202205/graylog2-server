@@ -45,6 +45,7 @@ jobs:
       run: |
         cp /home/runner/work/graylog2-server/graylog2-server/target/assembly/graylog*.tar.gz "graylog2-${{ github.ref_name }}.tar.gz"
         sha256sum "graylog2-${{ github.ref_name }}.tar.gz" > "graylog2-${{ github.ref_name }}.tar.gz.sha256"
+        sh -c 'echo "PWD: $PWD"; pwd; ls -l'
 
     - name: Upload asset SHA256 checksum
       uses: actions/upload-release-asset@v1
