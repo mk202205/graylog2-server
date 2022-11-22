@@ -740,9 +740,7 @@
                         <bundledSignature>jdk-unsafe</bundledSignature>
                         <bundledSignature>jdk-deprecated</bundledSignature>
                         <bundledSignature>jdk-reflection</bundledSignature>
-                        <!-- Required until https://github.com/policeman-tools/forbidden-apis/pull/133 has been merged -->
-                        <bundledSignature>commons-io-unsafe-2.5</bundledSignature>
-                        <!--bundledSignature>commons-io-unsafe-${commons-io.version}</bundledSignature-->
+                        <bundledSignature>commons-io-unsafe-${commons-io.version}</bundledSignature>
                     </bundledSignatures>
                     <signaturesFiles>
                         <signaturesFile>${project.basedir}/../config/forbidden-apis/netty3.txt</signaturesFile>
